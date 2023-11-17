@@ -1,10 +1,28 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
 
-import { Home } from '@/pages/home'
+import { LoginPage } from '@/pages/login'
+import { loginAction, loginLoader, protectedLoader } from '@/libs/login'
+import { DashboardPage } from '@/pages/dashboard'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/login" replace />,
+      },
+      {
+        path: 'login',
+        element: <LoginPage />,
+        loader: loginLoader,
+        action: loginAction,
+      },
+      {
+        path: 'dashboard',
+        element: <DashboardPage />,
+        loader: protectedLoader,
+      },
+    ],
   },
 ])
