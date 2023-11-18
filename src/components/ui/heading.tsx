@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import React from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
 
@@ -24,11 +25,12 @@ type HeadingProps = React.BaseHTMLAttributes<HTMLHeadingElement> & {
 export const Heading = ({
   size,
   children,
+  className,
   ...rest
 }: HeadingProps & HeadingVariants) => {
   return React.createElement(
     size || 'h1',
-    { className: styles({ size: size }), ...rest },
+    { className: clsx(styles({ size: size }), className), ...rest },
     children,
   )
 }

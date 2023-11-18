@@ -1,8 +1,9 @@
-import { Navigate, createBrowserRouter } from 'react-router-dom'
+import { Navigate, createBrowserRouter, redirect } from 'react-router-dom'
 
+import { Dashboard, Exams, Profile } from '@/pages/dashboard'
 import { LoginPage } from '@/pages/login'
-import { loginAction, loginLoader, protectedLoader } from '@/libs/login'
-import { DashboardPage } from '@/pages/dashboard'
+import { loginAction, loginLoader, protectedLoader } from '@/libs/auth'
+import { authProvider } from '@/providers/auth'
 
 export const router = createBrowserRouter([
   {
@@ -18,11 +19,33 @@ export const router = createBrowserRouter([
         loader: loginLoader,
         action: loginAction,
       },
+    ],
+  },
+  {
+    id: 'dashboard',
+    path: 'dashboard',
+    element: <Dashboard />,
+    loader: protectedLoader,
+    children: [
       {
-        path: 'dashboard',
-        element: <DashboardPage />,
-        loader: protectedLoader,
+        index: true,
+        element: <Exams />,
+        // loader: () => {
+        //   return authProvider.getExams()
+        // }
+      },
+      {
+        path: 'profile',
+        element: <Profile />,
       },
     ],
+  },
+  {
+    path: 'logout',
+    action: async () => {
+      // We signout in a "resource route" that we can hit from a fetcher.Form
+      await authProvider.signout()
+      return redirect('/')
+    },
   },
 ])

@@ -20,12 +20,15 @@ export const LoginPage = () => {
           id="username"
           name="username"
           className="mb-4"
+          defaultValue="hendra"
         />
         <Input
           label="Password"
           id="password"
           name="password"
+          type="password"
           className="mb-4"
+          defaultValue="hendra123"
         />
         {actionData && actionData.error ? (
           <p className="mb-4 rounded bg-red-300 px-3 py-2 text-red-900">
