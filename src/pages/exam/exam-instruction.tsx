@@ -34,6 +34,7 @@ export const ExamInstruction = () => {
         </div>
         <Form method="post" replace>
           <input type="hidden" name="examId" value={exam.id} />
+          <input type="hidden" name="duration" value={exam.duration} />
           <Button type="submit" color="green" className="w-full">
             Start Exam
           </Button>

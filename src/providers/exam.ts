@@ -7,9 +7,13 @@ export interface ExamProvider {
   // Exam
   getExams(): Omit<Exam, 'rules'>[]
   getExamById(examId: number): Exam | undefined
+  saveEndTimeExam(examId: number, duration: number): void
+  getEndTimeExam(examId: number): string | undefined
 
   // Question
-  getQuestionById(questionId: number): Omit<Question, 'correctAnswer'>
+  getQuestionById(
+    questionId: number,
+  ): Omit<Question, 'correctAnswer'> | undefined
 
   // Answer
   saveAnswer(examId: number, questionId: number, answerId: number): void
@@ -28,19 +32,28 @@ export const examProvider: ExamProvider = {
   getExamById: (examId: number) => {
     return exams.find((exam) => exam.id === examId)
   },
+  saveEndTimeExam: (examId: number, duration: number) => {
+    const endTime = new Date().getTime() + duration * 60 * 1000
+    localStorage.setItem(`end-exam-${examId}`, endTime.toString())
+  },
+  getEndTimeExam: (examId: number) => {
+    const endTime = localStorage.getItem(`end-exam-${examId}`)
+    return endTime ?? undefined
+  },
 
   // Question
   getQuestionById: (questionId: number) => {
-    const { id, answers, content } = questions.find(
+    const question = questions.find(
       (question) => question.id === questionId,
     ) as unknown as Question
+    if (!question) return undefined
 
     return {
-      id,
-      answers: shuffle(answers),
-      content,
-      hasPrev: id > 1,
-      hasNext: id < questions.length,
+      id: question?.id,
+      answers: shuffle(question?.answers),
+      content: question?.content,
+      hasPrev: question?.id > 1,
+      hasNext: question?.id < questions.length,
     }
   },
 

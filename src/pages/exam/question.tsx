@@ -9,13 +9,17 @@ import {
 import { Question as IQuestion } from '@/_data/questions'
 import { Button, Container, Heading, Input } from '@/components/ui'
 import { examProvider } from '@/providers/exam'
+import { formatDuration } from '@/utils/format'
 
 export const Question = () => {
-  const { question, answer } = useRouteLoaderData('question') as {
+  const { question, answer, endTime } = useRouteLoaderData('question') as {
     question: Omit<IQuestion, 'correctAnswer'>
     answer?: string
+    endTime: string
   }
+  const remainingTime = Number(endTime) - new Date().getTime()
 
+  const [timer, setTimer] = useState(Math.floor(remainingTime / 1000))
   const [selectedAnswer, setSelectedAnswer] = useState<string | undefined>(
     answer,
   )
@@ -29,6 +33,15 @@ export const Question = () => {
       examProvider.getAnswer(Number(params.examId), question.id),
     )
   }, [params.examId, question.id])
+
+  // Update timer every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : prev))
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const saveAnswer = () => {
     // TODO: Handle no answer selected
@@ -79,6 +92,10 @@ export const Question = () => {
       </header>
 
       <main className="space-y-2 py-4">
+        <div className="mx-auto flex max-w-fit flex-col items-center space-y-1 rounded bg-gray-400 px-4 py-2">
+          <p className="text-sm">Remaining Time</p>
+          <time className="font-bold">{formatDuration(timer)}</time>
+        </div>
         <p className="font-medium">{question.content}</p>
         <div className="space-y-1">
           {question.answers.map((answer) => (

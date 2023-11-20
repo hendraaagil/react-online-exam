@@ -16,6 +16,11 @@ export const examLoader = ({ params }: LoaderFunctionArgs) => {
 
 export const examAction = async ({ request }: LoaderFunctionArgs) => {
   const formData = await request.formData()
+  examProvider.saveEndTimeExam(
+    Number(formData.get('examId')),
+    Number(formData.get('duration')),
+  )
+
   return redirect('/exam/' + formData.get('examId') + '/question')
 }
 
@@ -26,8 +31,13 @@ export const indexQuestionLoader = ({ request }: LoaderFunctionArgs) => {
 export const questionLoader = ({ params }: LoaderFunctionArgs) => {
   const examId = Number(params.examId as string)
   const questionId = Number(params.questionId as string)
-  const question = examProvider.getQuestionById(questionId)
-  const answer = examProvider.getAnswer(examId, questionId)
 
-  return { question, answer }
+  const question = examProvider.getQuestionById(questionId)
+  const endTime = examProvider.getEndTimeExam(examId)
+  if (!question || !endTime) {
+    return redirect('/dashboard')
+  }
+
+  const answer = examProvider.getAnswer(examId, questionId)
+  return { question, answer, endTime }
 }
