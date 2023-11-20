@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { tv, type VariantProps } from 'tailwind-variants'
 
 const styles = tv({
@@ -24,10 +25,11 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 export const Button = ({
   color,
   children,
+  className,
   ...rest
 }: ButtonProps & ButtonVariants) => {
   return (
-    <button {...rest} className={styles({ color: color })}>
+    <button {...rest} className={clsx(styles({ color: color }), className)}>
       {children}
     </button>
   )
