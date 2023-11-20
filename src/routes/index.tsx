@@ -1,12 +1,22 @@
-import { Navigate, createBrowserRouter, redirect } from 'react-router-dom'
+import { Navigate, Outlet, createBrowserRouter } from 'react-router-dom'
 
 import { Dashboard, Exams, Profile } from '@/pages/dashboard'
-import { ExamInstruction } from '@/pages/exam'
+import { ExamInstruction, Question } from '@/pages/exam'
 import { LoginPage } from '@/pages/login'
 
-import { loginAction, loginLoader, protectedLoader } from '@/libs/auth'
-import { authProvider } from '@/providers/auth'
-import { examProvider } from '@/providers/exam'
+import {
+  loginAction,
+  loginLoader,
+  logoutAction,
+  protectedLoader,
+} from '@/libs/auth'
+import {
+  examAction,
+  examLoader,
+  examsLoader,
+  indexQuestionLoader,
+  questionLoader,
+} from '@/libs/exam'
 
 export const router = createBrowserRouter([
   {
@@ -34,9 +44,7 @@ export const router = createBrowserRouter([
         id: 'exams',
         index: true,
         element: <Exams />,
-        loader: () => {
-          return { exams: examProvider.getExams() }
-        },
+        loader: examsLoader,
       },
       {
         path: 'profile',
@@ -53,26 +61,37 @@ export const router = createBrowserRouter([
         element: <Navigate to="/dashboard" replace />,
       },
       {
-        id: 'exam',
         path: ':examId',
-        element: <ExamInstruction />,
-        loader: ({ params }) => {
-          const exam = examProvider.getExamById(Number(params.examId as string))
-          if (!exam) {
-            return redirect('/dashboard')
-          }
-
-          return { exam: exam }
-        },
+        element: <Outlet />,
+        children: [
+          {
+            id: 'exam',
+            index: true,
+            element: <ExamInstruction />,
+            loader: examLoader,
+            action: examAction,
+          },
+          {
+            path: 'question',
+            children: [
+              {
+                index: true,
+                loader: indexQuestionLoader,
+              },
+              {
+                id: 'question',
+                path: ':questionId',
+                element: <Question />,
+                loader: questionLoader,
+              },
+            ],
+          },
+        ],
       },
     ],
   },
   {
     path: 'logout',
-    action: async () => {
-      // We signout in a "resource route" that we can hit from a fetcher.Form
-      await authProvider.signout()
-      return redirect('/')
-    },
+    action: logoutAction,
   },
 ])

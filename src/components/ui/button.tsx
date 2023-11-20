@@ -7,7 +7,6 @@ const styles = tv({
     color: {
       neutral: 'bg-zinc-700 text-white',
       green: 'bg-green-700 text-white',
-      blue: 'bg-blue-700 text-white',
       red: 'bg-red-700 text-white',
     },
   },

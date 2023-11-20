@@ -44,3 +44,8 @@ export const protectedLoader = () => {
   }
   return { username: authProvider.username }
 }
+
+export const logoutAction = async () => {
+  await authProvider.signout()
+  return redirect('/')
+}

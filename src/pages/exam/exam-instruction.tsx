@@ -19,7 +19,7 @@ export const ExamInstruction = () => {
         </Link>
       </header>
 
-      <main className="w-full space-y-4 py-4">
+      <main className="space-y-4 py-4">
         <div>
           <p className="font-bold">Exam Title</p>
           <p>{exam.name}</p>
@@ -33,6 +33,7 @@ export const ExamInstruction = () => {
           <p>{exam.rules}</p>
         </div>
         <Form method="post" replace>
+          <input type="hidden" name="examId" value={exam.id} />
           <Button type="submit" color="green" className="w-full">
             Start Exam
           </Button>
