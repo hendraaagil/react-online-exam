@@ -24,8 +24,10 @@ export const indexQuestionLoader = ({ request }: LoaderFunctionArgs) => {
 }
 
 export const questionLoader = ({ params }: LoaderFunctionArgs) => {
-  const question = examProvider.getQuestionById(
-    Number(params.questionId as string),
-  )
-  return { question }
+  const examId = Number(params.examId as string)
+  const questionId = Number(params.questionId as string)
+  const question = examProvider.getQuestionById(questionId)
+  const answer = examProvider.getAnswer(examId, questionId)
+
+  return { question, answer }
 }

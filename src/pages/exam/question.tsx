@@ -1,30 +1,65 @@
-import { useLocation, useNavigate, useRouteLoaderData } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useRouteLoaderData,
+} from 'react-router-dom'
 
 import { Question as IQuestion } from '@/_data/questions'
 import { Button, Container, Heading, Input } from '@/components/ui'
-import { useRef } from 'react'
+import { examProvider } from '@/providers/exam'
 
 export const Question = () => {
-  const { question } = useRouteLoaderData('question') as {
+  const { question, answer } = useRouteLoaderData('question') as {
     question: Omit<IQuestion, 'correctAnswer'>
+    answer?: string
   }
-  const formRef = useRef<HTMLFormElement>(null)
+
+  const [selectedAnswer, setSelectedAnswer] = useState<string | undefined>(
+    answer,
+  )
+  const params = useParams()
   const location = useLocation()
   const navigate = useNavigate()
 
+  // Get manually on mount, because useRouteLoaderData doesn't triggered on mount
+  useEffect(() => {
+    setSelectedAnswer(
+      examProvider.getAnswer(Number(params.examId), question.id),
+    )
+  }, [params.examId, question.id])
+
+  const saveAnswer = () => {
+    // TODO: Handle no answer selected
+    if (!selectedAnswer) {
+      return
+    }
+
+    examProvider.saveAnswer(
+      Number(params.examId),
+      question.id,
+      Number(selectedAnswer),
+    )
+  }
+
   const handlePrev = () => {
+    saveAnswer()
     navigate(`../${question.id - 1}`)
   }
 
   const handleNext = () => {
-    const formData = new FormData(formRef.current!)
-    console.log(formData.get('answer'))
-
+    saveAnswer()
+    setSelectedAnswer(undefined)
     navigate(
       question.hasNext
         ? `../${question.id + 1}`
         : location.pathname.replace(/\/question\/.*/, '/result'),
     )
+  }
+
+  const handleChangeAnswer = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedAnswer(event.target.value)
   }
 
   return (
@@ -45,7 +80,7 @@ export const Question = () => {
 
       <main className="space-y-2 py-4">
         <p className="font-medium">{question.content}</p>
-        <form ref={formRef} className="space-y-1">
+        <div className="space-y-1">
           {question.answers.map((answer) => (
             <Input
               key={answer.id}
@@ -54,9 +89,11 @@ export const Question = () => {
               label={answer.text}
               name="answer"
               type="radio"
+              onChange={handleChangeAnswer}
+              checked={selectedAnswer === answer.id.toString()}
             />
           ))}
-        </form>
+        </div>
       </main>
     </Container>
   )
