@@ -44,3 +44,36 @@ export const questionLoader = ({ params }: LoaderFunctionArgs) => {
   const answer = examProvider.getAnswer(examId, questionId)
   return { question, answer, endTime }
 }
+
+export const questionAction = async ({ request }: LoaderFunctionArgs) => {
+  return redirect(request.url.replace(/\/question\/.*/, '/result'))
+}
+
+export const resultLoader = ({ params }: LoaderFunctionArgs) => {
+  const examId = Number(params.examId as string)
+  const exam = examProvider.getExamById(examId)
+
+  let questions = examProvider.getQuestions()
+  questions = questions.map((question) => {
+    const answer = examProvider.getAnswer(examId, question.id)
+    return {
+      ...question,
+      selectedAnswer: answer ? Number(answer) : undefined,
+    }
+  })
+  const score =
+    questions.filter(
+      (question) => question.correctAnswer === question.selectedAnswer,
+    ).length * 10
+  const maxScore = questions.length * 10
+
+  const endTime = examProvider.getEndTimeExam(examId)
+  if (!exam || !endTime) {
+    return redirect('/dashboard')
+  }
+
+  examProvider.clearEndTimeExam(examId)
+  examProvider.clearAnswers(examId)
+
+  return { exam, questions, score, maxScore }
+}

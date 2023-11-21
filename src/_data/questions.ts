@@ -1,13 +1,14 @@
 export interface Question {
   id: number
-  content: number
+  content: string
   answers: { id: number; text: string }[]
   correctAnswer: number
+  selectedAnswer?: number
   hasPrev?: boolean
   hasNext?: boolean
 }
 
-export const questions = [
+export const questions: Question[] = [
   {
     id: 1,
     content: 'What is the capital of France?',

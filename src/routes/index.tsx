@@ -1,7 +1,7 @@
 import { Navigate, Outlet, createBrowserRouter } from 'react-router-dom'
 
 import { Dashboard, Exams, Profile } from '@/pages/dashboard'
-import { ExamInstruction, Question } from '@/pages/exam'
+import { ExamInstruction, Question, Result } from '@/pages/exam'
 import { LoginPage } from '@/pages/login'
 
 import {
@@ -15,7 +15,9 @@ import {
   examLoader,
   examsLoader,
   indexQuestionLoader,
+  questionAction,
   questionLoader,
+  resultLoader,
 } from '@/libs/exam'
 
 export const router = createBrowserRouter([
@@ -83,8 +85,15 @@ export const router = createBrowserRouter([
                 path: ':questionId',
                 element: <Question />,
                 loader: questionLoader,
+                action: questionAction,
               },
             ],
+          },
+          {
+            id: 'result',
+            path: 'result',
+            element: <Result />,
+            loader: resultLoader,
           },
         ],
       },

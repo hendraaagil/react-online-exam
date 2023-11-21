@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
-  useLocation,
+  useFetcher,
   useNavigate,
   useParams,
   useRouteLoaderData,
@@ -24,7 +24,7 @@ export const Question = () => {
     answer,
   )
   const params = useParams()
-  const location = useLocation()
+  const fetcher = useFetcher()
   const navigate = useNavigate()
 
   // Get manually on mount, because useRouteLoaderData doesn't triggered on mount
@@ -44,7 +44,7 @@ export const Question = () => {
   }, [])
 
   const saveAnswer = () => {
-    // TODO: Handle no answer selected
+    // If no answer selected, don't save
     if (!selectedAnswer) {
       return
     }
@@ -64,15 +64,16 @@ export const Question = () => {
   const handleNext = () => {
     saveAnswer()
     setSelectedAnswer(undefined)
-    navigate(
-      question.hasNext
-        ? `../${question.id + 1}`
-        : location.pathname.replace(/\/question\/.*/, '/result'),
-    )
+    navigate(`../${question.id + 1}`)
   }
 
   const handleChangeAnswer = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAnswer(event.target.value)
+  }
+
+  const handleFinish = () => {
+    saveAnswer()
+    fetcher.submit(null, { method: 'post' })
   }
 
   return (
@@ -86,7 +87,11 @@ export const Question = () => {
           <div />
         )}
         <Heading className="place-self-center">Question {question.id}</Heading>
-        <Button color="green" className="place-self-end" onClick={handleNext}>
+        <Button
+          color="green"
+          className="place-self-end"
+          onClick={question.hasNext ? handleNext : handleFinish}
+        >
           {question.hasNext ? 'Next' : 'Finish'}
         </Button>
       </header>

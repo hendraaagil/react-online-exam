@@ -9,8 +9,10 @@ export interface ExamProvider {
   getExamById(examId: number): Exam | undefined
   saveEndTimeExam(examId: number, duration: number): void
   getEndTimeExam(examId: number): string | undefined
+  clearEndTimeExam: (examId: number) => void
 
   // Question
+  getQuestions(): Question[]
   getQuestionById(
     questionId: number,
   ): Omit<Question, 'correctAnswer'> | undefined
@@ -18,6 +20,7 @@ export interface ExamProvider {
   // Answer
   saveAnswer(examId: number, questionId: number, answerId: number): void
   getAnswer(examId: number, questionId: number): string | undefined
+  clearAnswers: (examId: number) => void
 }
 
 export const examProvider: ExamProvider = {
@@ -40,8 +43,12 @@ export const examProvider: ExamProvider = {
     const endTime = localStorage.getItem(`end-exam-${examId}`)
     return endTime ?? undefined
   },
+  clearEndTimeExam: (examId: number) => {
+    localStorage.removeItem(`end-exam-${examId}`)
+  },
 
   // Question
+  getQuestions: () => questions,
   getQuestionById: (questionId: number) => {
     const question = questions.find(
       (question) => question.id === questionId,
@@ -64,5 +71,10 @@ export const examProvider: ExamProvider = {
   getAnswer: (examId: number, questionId: number) => {
     const answer = localStorage.getItem(`answer-${examId}-${questionId}`)
     return answer ?? undefined
+  },
+  clearAnswers: (examId: number) => {
+    questions.forEach((question) => {
+      localStorage.removeItem(`answer-${examId}-${question.id}`)
+    })
   },
 }
