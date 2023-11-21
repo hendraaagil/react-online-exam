@@ -8,7 +8,7 @@ import {
 
 import { Question as IQuestion } from '@/_data/questions'
 import { Button, Container, Heading } from '@/components/ui'
-import { AnswerOption } from '@/components/exam'
+import { AnswerOption, FinishModal } from '@/components/exam'
 
 import { examProvider } from '@/providers/exam'
 import { formatDuration } from '@/utils/format'
@@ -21,6 +21,7 @@ export const Question = () => {
   }
   const remainingTime = Number(endTime) - new Date().getTime()
 
+  const [showModal, setShowModal] = useState(false)
   const [timer, setTimer] = useState(Math.floor(remainingTime / 1000))
   const [selectedAnswer, setSelectedAnswer] = useState<string | undefined>(
     answer,
@@ -51,8 +52,12 @@ export const Question = () => {
 
   const handleFinish = useCallback(() => {
     saveAnswer()
+    setShowModal(true)
+  }, [saveAnswer])
+
+  const handleSubmit = () => {
     fetcher.submit(null, { method: 'post' })
-  }, [fetcher, saveAnswer])
+  }
 
   // Handle finish when timer is 0
   useEffect(() => {
@@ -86,6 +91,13 @@ export const Question = () => {
 
   return (
     <Container>
+      {showModal && (
+        <FinishModal
+          setShowModal={setShowModal}
+          submitHandler={handleSubmit}
+          time={timer}
+        />
+      )}
       <header className="grid grid-cols-1 gap-4 border-b border-gray-700 py-4 sm:grid-cols-3">
         {question.hasPrev ? (
           <Button color="red" className="w-full" onClick={handlePrev}>

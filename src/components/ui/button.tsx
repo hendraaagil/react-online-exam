@@ -28,7 +28,7 @@ export const Button = ({
   ...rest
 }: ButtonProps & ButtonVariants) => {
   return (
-    <button {...rest} className={clsx(styles({ color: color }), className)}>
+    <button {...rest} className={clsx(styles({ color }), className)}>
       {children}
     </button>
   )
