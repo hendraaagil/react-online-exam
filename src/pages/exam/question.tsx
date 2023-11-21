@@ -54,18 +54,21 @@ export const Question = () => {
     fetcher.submit(null, { method: 'post' })
   }, [fetcher, saveAnswer])
 
+  // Handle finish when timer is 0
+  useEffect(() => {
+    if (timer <= 0) {
+      handleFinish()
+    }
+  }, [timer, handleFinish])
+
   // Update timer every second
   useEffect(() => {
     const interval = setInterval(() => {
-      if (timer <= 0) {
-        return handleFinish()
-      }
-
       setTimer((prev) => (prev > 0 ? prev - 1 : prev))
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [handleFinish, timer])
+  }, [])
 
   const handlePrev = () => {
     saveAnswer()
@@ -102,7 +105,7 @@ export const Question = () => {
       </header>
 
       <main className="space-y-2 py-4">
-        <div className="mx-auto flex max-w-fit flex-col items-center space-y-1 rounded bg-gray-400 px-4 py-2">
+        <div className="mx-auto flex flex-col items-center space-y-1 rounded bg-gray-400 px-4 py-2 sm:max-w-fit">
           <p className="text-sm">Remaining Time</p>
           <time className="font-bold">{formatDuration(timer)}</time>
         </div>
