@@ -74,7 +74,6 @@ export const Question = () => {
 
   const handleNext = () => {
     saveAnswer()
-    setSelectedAnswer(undefined)
     navigate(`../${question.id + 1}`)
   }
 
