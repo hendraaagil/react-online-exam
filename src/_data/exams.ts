@@ -5,6 +5,7 @@ export interface Exam {
   rules: string
 }
 
+// Exam lists
 export const exams: Exam[] = [
   {
     id: 1,

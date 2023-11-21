@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   useFetcher,
   useNavigate,
@@ -7,7 +7,9 @@ import {
 } from 'react-router-dom'
 
 import { Question as IQuestion } from '@/_data/questions'
-import { Button, Container, Heading, Input } from '@/components/ui'
+import { Button, Container, Heading } from '@/components/ui'
+import { AnswerOption } from '@/components/exam'
+
 import { examProvider } from '@/providers/exam'
 import { formatDuration } from '@/utils/format'
 
@@ -34,16 +36,7 @@ export const Question = () => {
     )
   }, [params.examId, question.id])
 
-  // Update timer every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prev) => (prev > 0 ? prev - 1 : prev))
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  const saveAnswer = () => {
+  const saveAnswer = useCallback(() => {
     // If no answer selected, don't save
     if (!selectedAnswer) {
       return
@@ -54,7 +47,25 @@ export const Question = () => {
       question.id,
       Number(selectedAnswer),
     )
-  }
+  }, [params.examId, question.id, selectedAnswer])
+
+  const handleFinish = useCallback(() => {
+    saveAnswer()
+    fetcher.submit(null, { method: 'post' })
+  }, [fetcher, saveAnswer])
+
+  // Update timer every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (timer <= 0) {
+        return handleFinish()
+      }
+
+      setTimer((prev) => (prev > 0 ? prev - 1 : prev))
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [handleFinish, timer])
 
   const handlePrev = () => {
     saveAnswer()
@@ -69,11 +80,6 @@ export const Question = () => {
 
   const handleChangeAnswer = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAnswer(event.target.value)
-  }
-
-  const handleFinish = () => {
-    saveAnswer()
-    fetcher.submit(null, { method: 'post' })
   }
 
   return (
@@ -104,13 +110,12 @@ export const Question = () => {
         <p className="font-medium">{question.content}</p>
         <div className="space-y-1">
           {question.answers.map((answer) => (
-            <Input
+            <AnswerOption
               key={answer.id}
               id={`answer-${answer.id}`}
               value={answer.id}
               label={answer.text}
               name="answer"
-              type="radio"
               onChange={handleChangeAnswer}
               checked={selectedAnswer === answer.id.toString()}
             />

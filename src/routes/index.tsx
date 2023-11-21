@@ -1,8 +1,8 @@
 import { Navigate, Outlet, createBrowserRouter } from 'react-router-dom'
 
+import { LoginPage } from '@/pages/login'
 import { Dashboard, Exams, Profile } from '@/pages/dashboard'
 import { ExamInstruction, Question, Result } from '@/pages/exam'
-import { LoginPage } from '@/pages/login'
 
 import {
   loginAction,
