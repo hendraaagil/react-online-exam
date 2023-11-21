@@ -27,7 +27,7 @@ export const Dashboard = () => {
         </fetcher.Form>
       </header>
 
-      <main className="flex">
+      <main className="flex flex-col sm:flex-row">
         <Navigation />
         <Outlet />
       </main>

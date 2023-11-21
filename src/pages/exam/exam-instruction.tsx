@@ -1,7 +1,8 @@
-import { Form, Link, useRouteLoaderData } from 'react-router-dom'
+import { Form, useRouteLoaderData } from 'react-router-dom'
 
 import { Exam } from '@/_data/exams'
-import { Button, Container, Heading } from '@/components/ui'
+import { Button, Container } from '@/components/ui'
+import { Header } from '@/components/exam'
 
 export const ExamInstruction = () => {
   const { exam, endTime } = useRouteLoaderData('exam') as {
@@ -11,14 +12,7 @@ export const ExamInstruction = () => {
 
   return (
     <Container>
-      <header className="flex items-center justify-between border-b border-gray-700 py-4">
-        <div className="flex items-center space-x-2">
-          <Heading>Exam Instruction Page</Heading>
-        </div>
-        <Link to="/dashboard" className="font-medium hover:underline">
-          Back to Dashboard
-        </Link>
-      </header>
+      <Header title="Exam Instruction Page" />
 
       <main className="space-y-4 py-4">
         <div>

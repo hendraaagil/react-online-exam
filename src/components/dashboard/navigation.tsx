@@ -16,7 +16,7 @@ const menus = [
 ]
 
 export const Navigation = () => (
-  <nav className="basis-1/4 py-4">
+  <nav className="basis-1/4 pt-4">
     <ul className="space-y-2">
       {menus.map((menu) => (
         <li key={menu.label} className="font-medium">

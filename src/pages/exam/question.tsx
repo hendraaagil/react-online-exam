@@ -83,9 +83,9 @@ export const Question = () => {
 
   return (
     <Container>
-      <header className="grid grid-cols-3 border-b border-gray-700 py-4">
+      <header className="grid grid-cols-1 gap-4 border-b border-gray-700 py-4 sm:grid-cols-3">
         {question.hasPrev ? (
-          <Button color="red" className="place-self-start" onClick={handlePrev}>
+          <Button color="red" className="w-full" onClick={handlePrev}>
             Previous
           </Button>
         ) : (
@@ -94,7 +94,7 @@ export const Question = () => {
         <Heading className="place-self-center">Question {question.id}</Heading>
         <Button
           color="green"
-          className="place-self-end"
+          className="w-full"
           onClick={question.hasNext ? handleNext : handleFinish}
         >
           {question.hasNext ? 'Next' : 'Finish'}
