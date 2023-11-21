@@ -4,8 +4,9 @@ import { Exam } from '@/_data/exams'
 import { Button, Container, Heading } from '@/components/ui'
 
 export const ExamInstruction = () => {
-  const { exam } = useRouteLoaderData('exam') as {
+  const { exam, endTime } = useRouteLoaderData('exam') as {
     exam: Exam
+    endTime?: string
   }
 
   return (
@@ -35,8 +36,9 @@ export const ExamInstruction = () => {
         <Form method="post" replace>
           <input type="hidden" name="examId" value={exam.id} />
           <input type="hidden" name="duration" value={exam.duration} />
+          <input type="hidden" name="endTime" value={endTime} />
           <Button type="submit" color="green" className="w-full">
-            Start Exam
+            {`${endTime ? 'Resume' : 'Start'} Exam`}
           </Button>
         </Form>
       </main>
